@@ -2,62 +2,28 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>CAT Simulator TWK TIU</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAT Simulator Ujian</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; display:flex; background-color: #f9f9f9; }
 
 /* HALAMAN AWAL */
-.start {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    flex-direction:column;
-    width: 100%;
-}
-
+.start { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; width: 100%; }
 .start h2 { margin-bottom: 20px; color: #333; }
+.btn-group { display: flex; gap: 10px; }
 
 /* SIDEBAR */
-.sidebar {
-    width: 250px;
-    background: #ffffff;
-    padding: 15px;
-    height: 100vh;
-    overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    box-sizing: border-box;
-}
+.sidebar { width: 250px; background: #ffffff; padding: 15px; height: 100vh; overflow-y: auto; box-shadow: 2px 0 5px rgba(0,0,0,0.1); box-sizing: border-box; }
 
 /* MAIN */
-.main { flex:1; padding: 30px; box-sizing: border-box; }
+.main { flex:1; padding: 30px; box-sizing: border-box; height: 100vh; overflow-y: auto;}
 
-button {
-    padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
+button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; background-color: #007bff; color: white; font-weight: bold; transition: 0.2s; }
 button:hover { background-color: #0056b3; }
 
 /* NAV SOAL */
 .nav-container { display: flex; flex-wrap: wrap; gap: 5px; }
-.nav-btn {
-    width: 40px;
-    height: 40px;
-    margin: 0;
-    border: 1px solid #ccc;
-    background: #f4f4f4;
-    color: #333;
-    cursor: pointer;
-    border-radius: 3px;
-}
+.nav-btn { width: 40px; height: 40px; padding: 0; border: 1px solid #ccc; background: #f4f4f4; color: #333; cursor: pointer; border-radius: 3px; }
 .nav-btn.answered { background: #28a745; color: white; border-color: #28a745; }
 .nav-btn.flagged { background: #ffc107; color: black; border-color: #ffc107; }
 .nav-btn.active { border: 2px solid #007bff; font-weight: bold; }
@@ -84,22 +50,20 @@ button:hover { background-color: #0056b3; }
 </head>
 <body>
 
-<!-- PILIH MODE -->
 <div class="start" id="start">
     <h2>Pilih Tes Simulator CAT</h2>
-    <div>
-        <button onclick="startTest('TWK')">Mulai Ujian TWK</button>
-        <button onclick="startTest('TIU')">Mulai Ujian TIU</button>
+    <div class="btn-group">
+        <button onclick="startTest('TWK')">Ujian TWK</button>
+        <button onclick="startTest('PU')">Ujian Penalaran Umum</button>
+        <button onclick="startTest('KOMP')">Ujian Komputer</button>
     </div>
 </div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="nav" style="display:none">
     <h3 style="margin-top:0;">Navigasi Soal</h3>
     <div class="nav-container" id="nav-container"></div>
 </div>
 
-<!-- MAIN -->
 <div class="main" id="main" style="display:none">
     <div class="header-info">
         <div class="timer" id="timer">00:00:00</div>
@@ -107,7 +71,6 @@ button:hover { background-color: #0056b3; }
     </div>
     
     <div class="progress"><div class="progress-bar" id="progress"></div></div>
-
     <div class="question-container" id="question"></div>
 
     <div class="controls">
@@ -120,215 +83,166 @@ button:hover { background-color: #0056b3; }
 
 <script>
 // ================= DATA SOAL =================
-// Kunci Jawaban: 0=A, 1=B, 2=C, 3=D, 4=E
+// A=0, B=1, C=2, D=3, E=4
 
 const TWK = [
-{q:"Dalam konteks Sumpah Pemuda 1928, nasionalisme Indonesia modern pertama kali diwujudkan melalui pengakuan satu tanah air, bangsa, dan bahasa. Namun, jika dianalisis dari perspektif nasionalisme integral Soekarno, bentuk nasionalisme mana yang paling bertentangan dengan semangat tersebut jika diterapkan pada era pasca-kolonial?[cite: 1]", o:["Nasionalisme sempit etnis","Nasionalisme liberal individualis","Nasionalisme feodal monarkis","Nasionalisme komunal agamis","Nasionalisme regionalis federal"], a:1},
-{q:"Nasionalisme Indonesia menurut Hatta dalam \"Indonesia Merdeka\" (1945) menekankan kedaulatan rakyat. Jika terjadi konflik antara kepentingan nasional dan aspirasi daerah otonom pasca-UU No. 23/2014, prinsip nasionalisme mana yang wajib diprioritaskan untuk menjaga kesatuan?[cite: 1]", o:["Prioritas ekonomi regional","Supremasi kedaulatan nasional","Otonomi luas tanpa batas","Federasi longgar antarprovinsi","Desentralisasi total kekuasaan"], a:1},
-{q:"Analisis historis menunjukkan nasionalisme Indonesia lahir dari perlawanan terhadap imperialisme. Dalam kasus hipotetis separatisme berbasis ideologi transnasional, bentuk nasionalisme defensif apa yang paling relevan berdasarkan doktrin Ki Hajar Dewantara?[cite: 1]", o:["Nasionalisme pasifis budaya","Nasionalisme militan merdeka belajar","Nasionalisme kooperatif internasional","Nasionalisme spiritual individual","Nasionalisme ekonomi proteksionis"], a:1},
-{q:"Nasionalisme konstitutif dalam Piagam Jakarta 1945 menolak negara teokratis. Jika sebuah gerakan massa menuntut syariat nasional berdasarkan mayoritas demografis, prinsip nasionalisme sekuler mana yang melanggar UUD 1945 Pasal 29?[cite: 1]", o:["Prinsip pluralisme agama","Prinsip kebebasan beragama","Prinsip negara berdasarkan ketuhanan","Prinsip demokrasi mayoritas","Prinsip hak minoritas mutlak"], a:0},
-{q:"Menurut Yudi Latif dalam \"Negara Paripurna\", nasionalisme Indonesia bersifat \"hibrida\". Dalam konteks geopolitik Laut China Selatan, aplikasi nasionalisme hibrida ini mengharuskan integrasi elemen apa untuk menjaga ZEE NKRI?[cite: 1]", o:["Aliansi militer unilateral","Diplomasi multilateral ASEAN","Ekspansi teritorial agresif","Isolasionisme maritim","Kompromi wilayah bilateral"], a:1},
-{q:"Nasionalisme revolusioner BPUPKI menekankan persatuan. Jika analisis SWOT nasionalisme Indonesia menghadapi disintegrasi digital, ancaman internal terbesar adalah?[cite: 1]", o:["Ketergantungan teknologi asing","Fragmentasi identitas virtual","Kurangnya literasi digital","Dominasi platform global","Semua benar, dengan B sebagai utama"], a:4},
-{q:"Dalam \"Budi Utomo\" sebagai embrio nasionalisme, prioritas pendidikan nasional. Jika reformasi pendidikan 2020 gagal mengintegrasikan muatan nasionalisme, dampaknya terhadap ketahanan nasional adalah?[cite: 1]", o:["Peningkatan globalisasi positif","Erosi loyalitas generasi muda","Diversifikasi kurikulum","Modernisasi tanpa ideologi","Otonomi sekolah lokal"], a:1},
-{q:"Nasionalisme Pancasila menurut Notonagoro bersifat holistik. Dalam skenario perang informasi hybrid, strategi nasionalisme preventif apa yang paling efektif berdasarkan GBHN era Orde Baru?[cite: 1]", o:["Propaganda konvensional","Integrasi informasi kebhinekaan","Sensor internet total","Aliansi intelijen regional","Pendidikan wajib militer"], a:1},
-{q:"Integritas nasional Pasal 27 ayat (1) UUD 1945 menjamin persamaan di depan hukum. Dalam kasus korupsi struktural, pelanggaran integritas nasional paling mendasar adalah?[cite: 1]", o:["Kerugian negara Rp2,3T","Pengkhianatan amanah publik","Konflik kepentingan elit","Manipulasi anggaran","Semua benar, B prioritas"], a:4},
-{q:"Menurut UU No. 30/2014 tentang Administrasi Pemerintahan, integritas nasional terancam oleh nepotisme. Sanksi administratif apa yang paling restoratif untuk integritas?[cite: 1]", o:["Pemberhentian tetap","Pembinaan etika wajib","Denda finansial","Rotasi jabatan","Pemecatan langsung"], a:1},
-{q:"Integritas nasional dalam konteks Orde Baru menekankan anti-korupsi. Analisis kasus BLBI (1998) menunjukkan kegagalan integritas karena?[cite: 1]", o:["Kebijakan moneter longgar","Moral hazard pejabat","Krisis global 1997","Kurangnya audit BPK","Semua, dengan B utama"], a:4},
-{q:"Prinsip integritas nasional KPK mencakup transparansi. Dalam pengadaan infrastruktur IKN, risiko integritas terbesar adalah?[cite: 1]", o:["Kolusi kontraktor asing","Mark-up anggaran negara","Ketidakefisienan birokrasi","Dampak lingkungan","B dan A setara"], a:4},
-{q:"Integritas nasional bersifat sistemik. Indikator integritas paling lemah berdasarkan survei Transparency International adalah?[cite: 1]", o:["Penegakan hukum","Independensi yudikatif","Pengawasan legislatif","Etika eksekutif","Semua setara"], a:4},
-{q:"Dalam doktrin integritas TNI-Polri, pelanggaran berat adalah pengkhianatan negara. Kasus penyelundupan narkoba oleh oknum, implikasi terhadap integritas nasional?[cite: 1]", o:["Kerusakan citra institusi","Ancaman ketahanan dalam negeri","Hilangnya kepercayaan publik","Semua benar","Hanya A"], a:3},
-{q:"Integritas nasional mengharuskan akuntabilitas. Reformasi birokrasi Perpres 81/2010 gagal jika?[cite: 1]", o:["Tidak ada whistleblower protection","Kurangnya digitalisasi","Resistensi budaya feodal","Semua benar","A paling krusial"], a:3},
-{q:"Analisis integritas nasional pasca-reformasi kasus Century Bank, pelanggaran etika terbesar adalah?[cite: 1]", o:["Intervensi politik pada BI","Moral hazard sistemik","Kurangnya transparansi OJK","Konflik kepentingan konglomerat","Semua, B sistemik"], a:4},
-{q:"Bela negara UU No. 3/2002 Pasal 9 wajib bagi WNI. Dalam konteks non-militer, bela negara paling efektif melawan terorisme adalah?[cite: 1]", o:["Pelaporan intelijen masyarakat","Latihan militer wajib","Penguatan ekonomi","Pendidikan ideologi","A dan D"], a:4},
-{q:"Doktrin bela negara Soekarno \"Jas Merah\" menekankan pengorbanan. Jika konflik hybrid di Natuna, bentuk bela negara sipil prioritas?[cite: 1]", o:["Dukungan logistik TNI","Advokasi diplomasi publik","Boikot ekonomi musuh","Semua benar","A utama"], a:3},
-{q:"Bela negara dalam UUD 1945 Pasal 30 ayat (2) melibatkan rakyat. Kasus invasi cyber, kewajiban bela negara digital adalah?[cite: 1]", o:["Sertifikasi keamanan siber","Partisipasi BSSN","Literasi anti-hoaks","Semua wajib","C prioritas"], a:3},
-{q:"Prinsip bela negara TNI AD holistik. Ancaman utama bela negara era 4.0 adalah?[cite: 1]", o:["Radikalisme online","Disrupsi AI asing","Fragmentasi sosial medsos","Semua benar","A paling aktual"], a:3},
-{q:"Bela negara pasif vs aktif menurut Moeldoko (2020), bela negara karakter. Dalam pandemi COVID-19, bela negara paling konkret?[cite: 1]", o:["Kepatuhan protokol kesehatan","Vaksinasi massal","Donasi gotong royong","Semua bentuk bela negara","A sebagai basis"], a:3},
-{q:"Integrasi bela negara dalam Kurikulum Merdeka. Jika siswa tolak muatan PPKn, implikasi terhadap?[cite: 1]", o:["Ketahanan ideologi","Loyalitas negara","Kesiapan pertahanan","Semua benar","B krusial"], a:3},
-{q:"Bela negara konstitusional Pasal 27 ayat (3). Kasus pelanggaran HAM berat 1998, bela negara korban adalah?[cite: 1]", o:["Pengungkapan kebenaran","Restorasi keadilan","Rekonsiliasi nasional","Semua elemen","A awal"], a:3},
-{q:"Strategi bela negara nusantara menghadapi China di LCS: prioritas?[cite: 1]", o:["Modernisasi alutsista","Aliansi QUAD-ASEAN","Mobilisasi rakyat nelayan","Diplomasi hukum UNCLOS","Semua terintegrasi"], a:4},
-{q:"Pancasila sila 1 sebagai dasar negara. Jika tuntutan khilafah tolak sila 1, pelanggaran konstitusional berdasarkan Tap MPR No. XVIII/MPR/1998?[cite: 1]", o:["Negara teokrasi","Pluralisme agama","Kebebasan berkeyakinan","Semua benar","A utama"], a:4},
-{q:"Sila 2 kemanusiaan adil. Analisis kasus Munir (2004), pelanggaran sila 2 adalah?[cite: 1]", o:["Pembunuhan politik","Impunitas negara","Konspirasi intelijen","Semua benar","B sistemik"], a:4},
-{q:"Sila 3 persatuan. Dalam otonomi daerah UU 23/2014, batas persatuan adalah?[cite: 1]", o:["Desentralisasi fiskal","Larangan separatisme","Pemekaran provinsi","Semua dibatasi NKRI","B konstitusional"], a:4},
-{q:"Sila 4 musyawarah. Reformasi DPR RI tolak musyawarah mufakat, implikasi?[cite: 1]", o:["Mayoritarianisme","Paralisis legislatif","Konflik antarfraksi","Semua benar","A dominan"], a:4},
-{q:"Sila 5 keadilan sosial. Ketimpangan Gini 0.38, kegagalan negara?[cite: 1]", o:["Redistribusi aset","Perlindungan buruh","Akses pendidikan","Semua sila 5","A struktural"], a:3},
-{q:"Pancasila sebagai ideologi terbuka. Kritik terbuka Pancasila diperbolehkan jika?[cite: 1]", o:["Tidak ubah dasar negara","Diskusi akademik","Reformasi sila","A dan B","Semua bebas"], a:3},
-{q:"Opennes Pancasila vs ortodoksi. Kasus G30S/PKI reinterpretasi, batas?[cite: 1]", o:["Penyangkalan sejarah","Analisis kritis","Propaganda komunis","Semua dilarang","C batas"], a:4},
-{q:"Pancasila 4.0 (Jokowi 2019): integrasi teknologi. Risiko AI pada sila 1?[cite: 1]", o:["Sekularisasi paksa","Diskriminasi algoritma","Kontrol data negara","Semua risiko","B etis"], a:3},
-{q:"BTI moto nasional sejak 1928. Pelanggaran BTI dalam kasus intoleransi Ahmadiyah?[cite: 1]", o:["Diskriminasi minoritas","Konflik agama","Regulasi negara","Semua benar","A mendasar"], a:4},
-{q:"BTI dalam UUD Pasal 29-32. Otonomi khusus Papua tolak BTI jika?[cite: 1]", o:["Pemekaran etnis","Referendum kemerdekaan","Bahasa daerah dominan","Semua potensial","B fatal"], a:4},
-{q:"BTI sebagai falsafah negara. Analisis konflik Ambon 1999, akar non-BTI?[cite: 1]", o:["Polarisasi horizontal","Elite politik","Kemiskinan","Semua faktor","A sosial"], a:4},
-{q:"Implementasi BTI Perpres 12/2018 toleransi. Kasus kerusuhan 212, pelanggaran?[cite: 1]", o:["Mobilisasi massa intoleran","Isu SARA politik","Media hoaks","Semua benar","B instrumental"], a:4},
-{q:"BTI dalam pendidikan: muatan PPKn. Jika kurikulum etnosentris, dampak?[cite: 1]", o:["Fragmentasi identitas","Kurang empati","Konflik generasi","Semua benar","A jangka panjang"], a:3},
-{q:"BTI geopolitik: ASEAN diversity. Indonesia tolak BTI jika?[cite: 1]", o:["Supremasi Jawa","Kebijakan sentralistik","Migran asing","A dan B","Semua salah"], a:3},
-{q:"Kritik BTI pasca-kolonial: homogenisasi. Respons negara?[cite: 1]", o:["Dekonsentrasi","Afirmasi budaya","Desentralisasi","Semua kebijakan","B kultural"], a:3},
-{q:"BTI 2024: tantangan digital. Hoaks SARA medsos, strategi?[cite: 1]", o:["UU ITE ketat","Literasi digital","Dialog virtual","Semua terintegrasi","D komprehensif"], a:4},
-{q:"NKRI bentuk negara kesatuan. Federalisme tolak NKRI karena?[cite: 1]", o:["Bubarkan pusat","Otonomi absolut","Konflik vertikal","Semua benar","B esensial"], a:4},
-{q:"NKRI harga mati Soekarno. RMS 1950 gagal karena?[cite: 1]", o:["Dukungan Belanda","Integrasi militer","Referendum RIS","Semua faktor","B penentu"], a:4},
-{q:"Wilayah NKRI UU No. 43/2008. Klaim China Natuna pelanggaran?[cite: 1]", o:["UNCLOS 1982","ZEE NKRI","Garis base archipelago","Semua hukum","C spesifik"], a:4},
-{q:"Populasi NKRI demografi bonus, ancaman disintegrasi?[cite: 1]", o:["Urbanisasi","Ketimpangan regional","Radikalisme pemuda","Semua risiko","B struktural"], a:3},
-{q:"NKRI dalam ASEAN. Prinsip non-intervensi batasi?[cite: 1]", o:["Rohingya crisis","Myanmar kudeta","Laut China Selatan","Semua kasus","A humanitarian"], a:3},
-{q:"Ekonomi NKRI pasca-pandemi. Resesi regional ancam NKRI jika?[cite: 1]", o:["Migas Papua","Freeport nasionalisasi","Hutang luar negeri","Semua vulnerabilitas","C fiskal"], a:3},
-{q:"NKRI digital sovereignty. UU PDP 2022 lindungi?[cite: 1]", o:["Data pribadi","Konten asing","Cyber threat","Semua aspek","D holistik"], a:3},
-{q:"Masa depan NKRI 2045. Visi emas, prasyarat?[cite: 1]", o:["Kesatuan wilayah","Stabilitas politik","Ekonomi maju","Semua terintegrasi","A fondasi"], a:4},
-{q:"UUD 1945 Pasal 1 ayat (2) kedaulatan rakyat. MK tolak amendemen jika?[cite: 1]", o:["Ubah bentuk negara","Perpanjang masa jabatan","Hapus DPD","Semua substantif","A mendasar"], a:4},
-{q:"Pasal 20A MD3 2018. DPR tolak RUU jika?[cite: 1]", o:["Inisiatif presiden","Prolegnas","Aspirasi rakyat","Semua wajib","B prosedural"], a:3},
-{q:"Pasal 24C wewenang MK. Judicial review BLU tolak karena?[cite: 1]", o:["Kewenangan administratif","Bukan peraturan","Eksekutif domain","Semua alasan","A tepat"], a:4},
-{q:"Amendemen ke-4 (2002) batasi presiden 2 periode. Visi konstitusi?[cite: 1]", o:["Anti-diktator","Stabilitas eksekutif","Demokrasi bergilir","Semua tujuan","A historis"], a:3},
-{q:"Pasal 33 ekonomi kerakyatan. Privatisasi BUMN pelanggaran jika?[cite: 1]", o:["Hilang kontrol negara","Monopoli swasta","Cabotage dilanggar","Semua potensial","A konstitusional"], a:4},
-{q:"HAM Pasal 28A-28J. Ekstradisi Daud Oke ke Australia sesuai?[cite: 1]", o:["Pasal 28D ayat 1","Non-refoulement","Due process","Semua lindungi","B spesifik"], a:4},
-{q:"Desentralisasi Pasal 18. Otsus Papua diperpanjang UU 2/2021 untuk?[cite: 1]", o:["Kesejahteraan","Pencegahan separatisme","Afirmasi adat","Semua tujuan","D komprehensif"], a:3},
-{q:"Supremasi UUD (Pasal 7). Presiden impeachment MK jika?[cite: 1]", o:["Pengkhianatan negara","Korupsi","Pelanggaran HAM","Semua makar","A literal"], a:4},
-{q:"Wawasan Nusantara (WN) doktrin 1960-an. Prinsip geo-maritim utama?[cite: 1]", o:["Archipelagic state","Garis pangkal lurus","PBB Resolusi 43/1982","Semua benar","A definisi"], a:3},
-{q:"WN dalam pertahanan. Sektor pertahanan 9: prioritas maritim?[cite: 1]", o:["Selat Malaka","Natuna Utara","Sabang-Merauke","Semua wilayah","B aktual"], a:3},
-{q:"Ekonomi WN: konektivitas. Tol Laut Jokowi realisasikan?[cite: 1]", o:["Redistribusi ekonomi","Integrasi timur","Logistik murah","Semua WN","B prioritas"], a:4},
-{q:"Sosial-budaya WN. Transmigrasi gagal jika?[cite: 1]", o:["Konflik etnis","Asimilasi paksa","Ketergantungan","Semua risiko","A historis"], a:3},
-{q:"WN geopolitik vs China. Nine-dash line tolak karena?[cite: 1]", o:["EEZ NKRI","Continental shelf","Historis hak","Semua klaim","A legal"], a:4},
-{q:"Pendidikan WN di Polri. Kurikulum fokus?[cite: 1]", o:["Kesadaran maritim","Bela negara nusantara","Ancaman asimetris","Semua elemen","D holistik"], a:3},
-{q:"WN 4.0: blue economy. Potensi?[cite: 1]", o:["Perikanan berkelanjutan","Energi terbarukan","Pariwisata bahari","Semua sumber daya","D strategis"], a:3},
-{q:"Tantangan WN: climate change. Naiknya air laut ancam?[cite: 1]", o:["Pulau-pulau kecil","Delta Jakarta","Ekosistem mangrove","Semua wilayah","A eksistensial"], a:4},
-{q:"HAM UUD Pasal 28A hak hidup. Aborsi terbatas UU PKDRT sesuai?[cite: 1]", o:["Pengecualian pemerkosaan","Non-derogable","Maternal health","Semua batas","A spesifik"], a:4},
-{q:"Pasal 28D ayat (1) hak kesetaraan. Diskriminasi gender di TNI-Polri?[cite: 1]", o:["Rekrutmen wanita","Promosi setara","Cut off usia","Semua isu","B substantif"], a:4},
-{q:"Komnas HAM independen. Investigasi Munir batas?[cite: 1]", o:["Akses dokumen rahasia","Testimoni saksi","Koordinasi BIN","Semua keterbatasan","A krusial"], a:4},
-{q:"HAM internasional: ICC ratifikasi terbatas. Timor Timur 1999 kenapa?[cite: 1]", o:["Kompetensi teritorial","Non-ratifikasi","Ad hoc tribunal","Semua alasan","B legal"], a:4},
-{q:"HAM ekonomi Pasal 28H. Kemiskinan struktural pelanggaran?[cite: 1]", o:["Standar minimum hidup","Akses pendidikan","Kesehatan universal","Semua hak","D kolektif"], a:3},
-{q:"Kebebasan berekspresi Pasal 28E. UU ITE pasca-MK 2019 batasi?[cite: 1]", o:["Hate speech","Hoaks","Defamasi","Semua pembatasan","A prioritas"], a:3},
-{q:"HAM anak UU 35/2014. Trafficking online tantangan?[cite: 1]", o:["Grooming digital","Pornografi anak","Dark web","Semua bentuk","D komprehensif"], a:3},
-{q:"Restitusi HAM berat. Kasus 1965-66 proses?[cite: 1]", o:["Pengungkapan kebenaran","Kompensasi korban","Non-recurrence","Semua tahap","D restoratif"], a:3},
-{q:"Nasionalisme Indonesia memiliki karakter berbeda dengan nasionalisme Barat karena…[cite: 1]", o:["Berbasis kesamaan ras dan bahasa","Berorientasi ekspansi wilayah","Dilandasi semangat anti-imperialisme dan persatuan dalam keberagaman","Mengutamakan kepentingan etnis mayoritas","Berbasis ekonomi semata"], a:2},
-{q:"Sikap nasionalisme yang paling tepat dalam era globalisasi adalah…[cite: 1]", o:["Menolak seluruh budaya asing","Mengadopsi semua budaya luar tanpa seleksi","Menyaring budaya asing sesuai nilai bangsa","Mengisolasi diri dari dunia luar","Mengikuti negara maju sepenuhnya"], a:2},
-{q:"Ancaman terhadap nasionalisme di era digital paling nyata adalah…[cite: 1]", o:["Perdagangan internasional","Penyebaran hoaks yang memecah persatuan","Kerja sama antarnegara","Investasi asing","Pariwisata global"], a:1},
-{q:"Integrasi nasional akan terganggu jika…[cite: 1]", o:["Pemerataan pembangunan berjalan baik","Terjadi kesenjangan sosial tinggi","Adanya toleransi antarumat beragama","Penegakan hukum konsisten","Pemerintah transparan"], a:1},
-{q:"Faktor pemersatu bangsa yang paling kuat adalah…[cite: 1]", o:["Kesamaan ekonomi","Ideologi nasional","Kesamaan profesi","Kesamaan wilayah kecil","Kepentingan politik"], a:1},
-{q:"Contoh ancaman non-militer terhadap integrasi nasional adalah…[cite: 1]", o:["Invasi militer","Spionase militer","Disinformasi publik","Perang terbuka","Blokade laut"], a:2},
-{q:"Bela negara dalam konteks modern tidak selalu berarti…[cite: 1]", o:["Mengangkat senjata","Berkontribusi sesuai profesi","Menjaga persatuan","Taat hukum","Membayar pajak"], a:0},
-{q:"Landasan konstitusional bela negara terdapat dalam…[cite: 1]", o:["Pasal 28","Pasal 30 ayat (1) UUD 1945","Pasal 33","Pasal 1 ayat (2)","Pasal 27 ayat (3) saja"], a:1},
-{q:"Sikap bela negara yang paling tepat di lingkungan kerja adalah…[cite: 1]", o:["Loyalitas buta pada atasan","Mengutamakan kepentingan pribadi","Profesional dan berintegritas","Menghindari tanggung jawab","Bersikap pasif"], a:2},
-{q:"Pancasila sebagai ideologi terbuka berarti…[cite: 1]", o:["Dapat diubah sesuka hati","Menyesuaikan perkembangan zaman tanpa mengubah nilai dasar","Tidak memiliki nilai tetap","Mengikuti ideologi lain","Bersifat sementara"], a:1},
-{q:"Nilai instrumental Pancasila tercermin dalam…[cite: 1]", o:["Norma sosial","UUD 1945 dan peraturan perundang-undangan","Kebiasaan masyarakat","Budaya lokal","Tradisi daerah"], a:1},
-{q:"Jika terjadi konflik antar nilai Pancasila, maka yang harus diutamakan adalah…[cite: 1]", o:["Kepentingan individu","Nilai yang paling populer","Keseimbangan dan hierarki nilai","Nilai ekonomi","Nilai kekuasaan"], a:2},
-{q:"Makna utama Bhinneka Tunggal Ika adalah…[cite: 1]", o:["Persatuan mutlak tanpa perbedaan","Perbedaan sebagai pemisah","Kesatuan dalam keberagaman","Dominasi mayoritas","Penghapusan budaya lokal"], a:2},
-{q:"Implementasi nyata Bhinneka Tunggal Ika adalah…[cite: 1]", o:["Uniformitas budaya","Diskriminasi sosial","Toleransi antar kelompok","Pemaksaan agama","Segregasi sosial"], a:2},
-{q:"Ancaman terhadap Bhinneka Tunggal Ika adalah…[cite: 1]", o:["Dialog antaragama","Pluralisme","Intoleransi dan radikalisme","Pendidikan multikultural","Kerja sama sosial"], a:2},
-{q:"Bentuk negara Indonesia adalah…[cite: 1]", o:["Federal","Konfederasi","Kesatuan","Monarki","Parlementer"], a:2},
-{q:"Prinsip NKRI tidak dapat diubah karena…[cite: 1]", o:["Keputusan presiden","Ketetapan MPR","Kesepakatan internasional","Konsensus nasional dan sejarah perjuangan","Undang-undang biasa"], a:3},
-{q:"Ancaman disintegrasi bangsa biasanya dipicu oleh…[cite: 1]", o:["Persatuan kuat","Ketimpangan dan konflik identitas","Stabilitas politik","Kemajuan ekonomi","Pendidikan tinggi"], a:1},
-{q:"UUD 1945 setelah amandemen menegaskan bahwa kedaulatan berada di tangan…[cite: 1]", o:["Presiden","MPR","DPR","Rakyat","Mahkamah Konstitusi"], a:3},
-{q:"Fungsi utama UUD 1945 adalah…[cite: 1]", o:["Hukum tertinggi negara","Pedoman organisasi masyarakat","Peraturan daerah","Hukum adat","Kebijakan pemerintah"], a:0},
-{q:"Perubahan UUD 1945 dilakukan untuk…[cite: 1]", o:["Mengganti ideologi","Menyesuaikan sistem ketatanegaraan dengan demokrasi","Menghapus Pancasila","Mengurangi hak rakyat","Menguatkan otoritarianisme"], a:1},
-{q:"Wawasan Nusantara adalah cara pandang bangsa Indonesia terhadap…[cite: 1]", o:["Politik global","Wilayah dan persatuan bangsa","Ekonomi dunia","Teknologi","Budaya asing"], a:1},
-{q:"Tujuan utama Wawasan Nusantara adalah…[cite: 1]", o:["Ekspansi wilayah","Memperkuat persatuan nasional","Dominasi ekonomi","Penguasaan militer","Isolasi negara"], a:1},
-{q:"Implementasi Wawasan Nusantara dalam kehidupan berbangsa adalah…[cite: 1]", o:["Ego sektoral","Sentralisasi ekstrem","Mengutamakan kepentingan nasional di atas golongan","Individualisme","Kompetisi tidak sehat"], a:2},
-{q:"Hak asasi manusia bersifat…[cite: 1]", o:["Diberikan negara","Universal dan melekat pada manusia","Bergantung pemerintah","Bisa dicabut sepenuhnya","Bersifat lokal"], a:1},
-{q:"Pembatasan HAM diperbolehkan jika…[cite: 1]", o:["Menguntungkan pemerintah","Sesuai kepentingan elite","Diatur oleh undang-undang dan untuk kepentingan umum","Demi kekuasaan","Tanpa alasan"], a:2},
-{q:"Pelanggaran HAM berat meliputi…[cite: 1]", o:["Pelanggaran lalu lintas","Diskriminasi ringan","Genosida dan kejahatan terhadap kemanusiaan","Sengketa pribadi","Pelanggaran administratif"], a:2},
-{q:"Keseimbangan antara HAM dan kewajiban warga negara berarti…[cite: 1]", o:["Hak lebih penting dari kewajiban","Kewajiban diabaikan","Hak dan kewajiban berjalan seimbang","Negara selalu benar","Rakyat selalu benar"], a:2}
+{q:"Nasionalisme Indonesia berbeda dengan nasionalisme Barat karena nasionalisme Indonesia didasarkan pada...", o:["Persamaan ras dan keturunan", "Kepentingan ekonomi semata", "Persamaan agama mayoritas", "Keinginan membentuk negara imperialis", "Persatuan dalam keberagaman berdasarkan Pancasila"], a:4},
+{q:"Integritas nasional dapat terancam apabila...", o:["Pemerintah menjalankan desentralisasi", "Masyarakat menjunjung hukum nasional", "Timbul konflik SARA yang memecah persatuan", "Terdapat kerja sama antardaerah", "Masyarakat menjaga budaya lokal"], a:2},
+{q:"Salah satu implementasi bela negara di lingkungan pendidikan adalah...", o:["Menolak aturan sekolah", "Menghindari kegiatan upacara", "Mengutamakan kepentingan pribadi", "Menjaga nama baik sekolah dan bangsa", "Membiarkan tindakan intoleransi"], a:3},
+{q:"Rumusan final sila pertama Pancasila dalam Piagam Jakarta mengalami perubahan bertujuan untuk...", o:["Menghapus peran agama", "Mengakomodasi persatuan nasional", "Menyesuaikan kepentingan penjajah", "Mengurangi kewenangan pemerintah", "Menghilangkan semangat kebangsaan"], a:1},
+{q:"Makna semboyan Bhinneka Tunggal Ika adalah...", o:["Perbedaan harus dihilangkan", "Semua budaya harus disamakan", "Persatuan dalam keberagaman", "Kebebasan tanpa batas", "Kesamaan bahasa nasional"], a:2},
+{q:"Negara Kesatuan Republik Indonesia ditegaskan dalam UUD 1945 Pasal...", o:["Pasal 1 ayat (1)", "Pasal 2 ayat (1)", "Pasal 18 ayat (2)", "Pasal 27 ayat (3)", "Pasal 30 ayat (1)"], a:0},
+{q:"Tujuan nasional bangsa Indonesia tercantum dalam...", o:["Pembukaan UUD 1945 alinea keempat", "Pasal 1 UUD 1945", "Batang tubuh UUD 1945", "Penjelasan UUD 1945", "TAP MPR"], a:0},
+{q:"Konsep Wawasan Nusantara menempatkan laut sebagai...", o:["Pemisah wilayah bangsa", "Unsur ekonomi semata", "Wilayah netral internasional", "Penghubung persatuan bangsa", "Daerah kekuasaan asing"], a:3},
+{q:"Hak asasi manusia bersifat universal yang berarti...", o:["Hanya berlaku di negara tertentu", "Bergantung pada budaya daerah", "Berlaku bagi seluruh umat manusia", "Diberikan oleh pemerintah", "Hanya dimiliki pejabat negara"], a:2},
+{q:"Sikap nasionalisme yang benar di era globalisasi adalah...", o:["Menolak seluruh budaya asing", "Mengikuti semua budaya luar", "Menutup hubungan internasional", "Menyaring budaya asing sesuai nilai bangsa", "Menghapus budaya daerah"], a:3},
+{q:"Faktor utama pendorong integrasi nasional Indonesia adalah...", o:["Persamaan bahasa daerah", "Letak geografis semata", "Rasa senasib sepenanggungan", "Persamaan tingkat ekonomi", "Kesamaan adat istiadat"], a:2},
+{q:"Ancaman nonmiliter terhadap NKRI di bidang ideologi dapat berupa...", o:["Invasi militer asing", "Pemberontakan bersenjata", "Penyebaran paham radikal", "Gempa bumi besar", "Krisis iklim global"], a:2},
+{q:"Nilai ketuhanan dalam Pancasila mengandung makna bahwa bangsa Indonesia...", o:["Negara agama", "Negara sekuler mutlak", "Anti terhadap agama", "Mengakui dan menghormati keberadaan agama", "Membatasi kebebasan beribadah"], a:3},
+{q:"Semboyan Bhinneka Tunggal Ika berasal dari kitab...", o:["Negarakertagama", "Sutasoma", "Arjunawiwaha", "Bharatayudha", "Pararaton"], a:1},
+{q:"Bentuk negara Indonesia sebagai negara kesatuan dipilih karena...", o:["Indonesia memiliki satu budaya", "Menghindari keberagaman daerah", "Menjamin persatuan seluruh wilayah", "Menyeragamkan adat daerah", "Menghapus pemerintahan daerah"], a:2},
+{q:"Perubahan UUD 1945 setelah reformasi dilakukan sebanyak...", o:["1 kali", "2 kali", "3 kali", "4 kali", "5 kali"], a:3},
+{q:"Wawasan Nusantara sebagai wawasan politik nasional mengutamakan...", o:["Kepentingan golongan", "Kepentingan daerah", "Kepentingan pribadi", "Persatuan dan kesatuan bangsa", "Dominasi pemerintah pusat"], a:3},
+{q:"Salah satu contoh pelanggaran HAM berat adalah...", o:["Korupsi", "Penganiayaan ringan", "Pencurian kendaraan", "Genosida", "Pelanggaran lalu lintas"], a:3},
+{q:"Nasionalisme sempit dapat menimbulkan...", o:["Persatuan dunia", "Kerja sama internasional", "Chauvinisme", "Solidaritas global", "Demokrasi sehat"], a:2},
+{q:"Integritas nasional mencerminkan...", o:["Kekuatan ekonomi semata", "Kesatuan bangsa dalam berbagai aspek kehidupan", "Kemajuan teknologi nasional", "Kekuasaan pemerintah pusat", "Jumlah penduduk yang besar"], a:1},
+{q:"Upaya bela negara sesuai Pasal 27 ayat (3) UUD 1945 merupakan...", o:["Hak warga negara", "Kewajiban pemerintah", "Hak dan kewajiban warga negara", "Tugas TNI semata", "Kewajiban aparat negara saja"], a:2},
+{q:"Nilai kemanusiaan dalam Pancasila menuntut sikap...", o:["Individualis", "Diskriminatif", "Menghormati martabat manusia", "Mengutamakan golongan tertentu", "Otoriter"], a:2},
+{q:"Keberagaman suku bangsa di Indonesia harus disikapi dengan...", o:["Primordialisme", "Diskriminasi sosial", "Toleransi dan saling menghargai", "Fanatisme daerah", "Sikap eksklusif"], a:2},
+{q:"NKRI diproklamasikan pada tanggal...", o:["1 Juni 1945", "17 Agustus 1945", "18 Agustus 1945", "28 Oktober 1928", "20 Mei 1908"], a:1},
+{q:"Kedaulatan berada di tangan rakyat tercantum dalam UUD 1945 Pasal...", o:["Pasal 1 ayat (2)", "Pasal 2 ayat (1)", "Pasal 27 ayat (1)", "Pasal 29 ayat (2)", "Pasal 33 ayat (1)"], a:0},
+{q:"Tujuan Wawasan Nusantara adalah...", o:["Memecah wilayah negara", "Mengutamakan kepentingan daerah", "Menumbuhkan persatuan nasional", "Membatasi hubungan internasional", "Menghapus budaya lokal"], a:2},
+{q:"Hak untuk hidup merupakan HAM yang termasuk kategori...", o:["Hak politik", "Hak ekonomi", "Hak asasi pribadi", "Hak sosial budaya", "Hak hukum"], a:2},
+{q:"Peristiwa Sumpah Pemuda menunjukkan pentingnya...", o:["Persaingan antardaerah", "Nasionalisme dan persatuan bangsa", "Kepentingan kelompok", "Politik kolonial", "Sistem federal"], a:1},
+{q:"Faktor penghambat integrasi nasional adalah...", o:["Toleransi", "Ketimpangan pembangunan", "Semangat persatuan", "Kerja sama antarsuku", "Sikap nasionalisme"], a:1},
+{q:"Kesediaan warga negara berkorban demi bangsa merupakan bentuk...", o:["Otonomi daerah", "Nasionalisme", "Liberalisme", "Individualisme", "Hedonisme"], a:1},
+{q:"Pancasila sebagai dasar negara memiliki fungsi sebagai...", o:["Pedoman hidup bangsa", "Ideologi tertutup", "Dasar penyelenggaraan negara", "Lambang negara", "Simbol pemerintahan"], a:2},
+{q:"Keragaman budaya Indonesia merupakan...", o:["Ancaman nasional", "Hambatan pembangunan", "Kelemahan negara", "Kekayaan bangsa", "Penyebab konflik utama"], a:3},
+{q:"Sistem pemerintahan Indonesia menurut UUD 1945 adalah...", o:["Parlementer", "Monarki absolut", "Presidensial", "Federal", "Oligarki"], a:2},
+{q:"Asas Wawasan Nusantara yang mengutamakan kepentingan bangsa di atas kepentingan pribadi disebut asas...", o:["Solidaritas", "Keadilan", "Kepentingan bersama", "Kejujuran", "Kesetiaan"], a:2},
+{q:"Komnas HAM dibentuk untuk...", o:["Menyusun undang-undang", "Mengadili pelanggaran HAM", "Menyelidiki dan mengawasi HAM", "Menggantikan tugas polisi", "Mengatur partai politik"], a:2},
+{q:"Nasionalisme Indonesia lahir karena adanya...", o:["Politik balas budi", "Perasaan senasib akibat penjajahan", "Kemajuan ekonomi kolonial", "Persamaan agama", "Dukungan bangsa Barat"], a:1},
+{q:"Ancaman terhadap integritas nasional di bidang sosial budaya dapat berupa...", o:["Penurunan ekspor", "Masuknya budaya negatif tanpa filter", "Defisit anggaran negara", "Persaingan perdagangan", "Inflasi nasional"], a:1},
+{q:"Bela negara dapat diwujudkan dengan cara...", o:["Melanggar hukum", "Mengutamakan kepentingan asing", "Membayar pajak tepat waktu", "Menyebarkan hoaks", "Mengabaikan aturan negara"], a:2},
+{q:"Sila persatuan Indonesia mengajarkan bahwa...", o:["Kepentingan golongan lebih utama", "Persatuan bangsa harus dijaga", "Kebebasan individu tanpa batas", "Pemerintah pusat mutlak", "Daerah harus mandiri penuh"], a:1},
+{q:"Makna penting Bhinneka Tunggal Ika bagi bangsa Indonesia adalah...", o:["Menyamakan seluruh budaya", "Menghapus identitas daerah", "Memperkuat persatuan dalam keberagaman", "Mengutamakan mayoritas", "Membatasi kebebasan budaya"], a:2},
+{q:"Wilayah Indonesia menurut konsep nusantara meliputi...", o:["Daratan saja", "Laut saja", "Darat, laut, dan udara", "Darat dan sungai", "Laut dan udara saja"], a:2},
+{q:"Kebebasan memeluk agama dijamin dalam UUD 1945 Pasal...", o:["Pasal 28A", "Pasal 28C", "Pasal 29 ayat (2)", "Pasal 30 ayat (1)", "Pasal 31 ayat (1)"], a:2},
+{q:"Contoh sikap yang mencerminkan wawasan nusantara adalah...", o:["Mengutamakan daerah sendiri", "Menolak budaya lain", "Menghargai keberagaman daerah sebagai kekayaan nasional", "Memisahkan diri dari NKRI", "Menganggap budaya sendiri paling unggul"], a:2},
+{q:"Hak memperoleh pendidikan termasuk HAM bidang...", o:["Politik", "Ekonomi", "Sosial budaya", "Hukum", "Pertahanan"], a:2},
+{q:"Pancasila sebagai ideologi terbuka berarti...", o:["Dapat diganti kapan saja", "Menutup pengaruh luar", "Bersifat dinamis sesuai perkembangan zaman", "Tidak memiliki nilai tetap", "Hanya berlaku sementara"], a:2},
+{q:"Semangat kebangsaan yang lahir pada 1908 ditandai dengan berdirinya organisasi...", o:["Sarekat Islam", "Indische Partij", "Budi Utomo", "Muhammadiyah", "PNI"], a:2},
+{q:"Persamaan kedudukan warga negara di depan hukum diatur dalam...", o:["Pasal 27 ayat (1)", "Pasal 28A", "Pasal 29 ayat (2)", "Pasal 30 ayat (1)", "Pasal 33 ayat (3)"], a:0},
+{q:"Tujuan utama bela negara adalah...", o:["Memperluas wilayah", "Menjaga kelangsungan hidup bangsa dan negara", "Menguasai negara lain", "Memperkuat partai politik", "Menambah kekuatan ekonomi semata"], a:1},
+{q:"Sikap menghargai HAM harus disertai dengan...", o:["Kebebasan tanpa batas", "Penggunaan kekuasaan mutlak", "Tanggung jawab dan penghormatan terhadap hak orang lain", "Kepentingan pribadi", "Dominasi kelompok mayoritas"], a:2},
+{q:"Hubungan antara Pancasila dan UUD 1945 adalah...", o:["Tidak saling berkaitan", "Pancasila lebih rendah dari UUD 1945", "UUD 1945 merupakan penjabaran nilai Pancasila", "UUD 1945 menggantikan Pancasila", "Pancasila hanya simbol negara"], a:2}
 ];
 
-const TIU = [
-{q:"UU No. 2/2002 Pasal 5 fungsi Polri: pemeliharaan keamanan. Dalam kasus demonstrasi UU Cipta Kerja 2020, kewenangan Polri berdasarkan Pasal mana?[cite: 2]", o:["Pasal 13 (perlindungan)","Pasal 18 (pengamanan)","Pasal 7 (penjagaan)","Pasal 30 (penindakan)","Pasal 2 (tugas pokok)"], a:1},
-{q:"Peraturan Kapolri 8/2009 tentang pengawasan internal. Sanksi disiplin berat bagi oknum polisi korupsi adalah?[cite: 2]", o:["Peringatan keras","Penahanan jabatan","Pemberhentian tidak dengan hormat","Mutasi wilayah","C paling berat"], a:2},
-{q:"UU No. 2/2002 Pasal 30 huruf f: penanggulangan terorisme. Koordinasi Polri-BIN di kasus Poso 2018 berdasarkan?[cite: 2]", o:["Perpres 12/2018","Inpres No. 5/2018","Pasal 43 UU Polri","MoU internal","B spesifik teror"], a:4},
-{q:"Rekrutmen Polri Perkapolri 10/2023: syarat usia tamtama. Batas maksimal untuk lulusan SMA?[cite: 2]", o:["21 tahun","22 tahun 6 bulan","23 tahun","24 tahun","B aktual 2024"], a:4},
-{q:"Kode etik Profesi Polri (Perkapolri 1/2009) Pasal 7: integritas. Pelanggaran terberat dalam kasus pemerasan pengemudi online?[cite: 2]", o:["Penyalahgunaan wewenang","Konflik kepentingan","Pengkhianatan profesi","Semua benar","A primer"], a:4},
-{q:"Polri sebagai penegak hukum Pasal 8 UU 2/2002. Dalam OTT KPK-Polri sinergi 2023, peran Polri?[cite: 2]", o:["Penyidik utama","Pendukung teknis","Pengamanan","Koordinator lapangan","C & D"], a:4},
-{q:"Peringkat Polri: Kompol bintang berapa?[cite: 2]", o:["2 bintang","3 bintang","4 bintang","1 bintang","B benar"], a:4},
-{q:"UU No. 2/2002 Pasal 14: hak polisi. Cuti tahunan minimum?[cite: 2]", o:["12 hari","15 hari","18 hari","20 hari","12 hari"], a:0},
-{q:"Satuan Reserse Kriminal Khusus (Rupbasan) dibentuk berdasarkan?[cite: 2]", o:["Perkapolri 6/2021","Inpres No. 1/2022","UU No. 11/2020 PK","Kepmendagri 2023","A spesifik"], a:0},
-{q:"Penggunaan senjata api Polri diatur Perkap No. 1/2009. Syarat tembak di tempat?[cite: 2]", o:["Perlawanan bersenjata","Ancaman jiwa","Perintah atasan","Semua syarat kumulatif","D ketat"], a:3},
-{q:"Akademi Kepolisian (Akpol) statusnya berdasarkan?[cite: 2]", o:["UU No. 17/2007 Diklat","Perpres 67/2018","Perkapolri 12/2020","SK Kapolri 2022","A fondasi"], a:0},
-{q:"Polri dalam penanganan narkoba: BNNP koordinasi berdasarkan?[cite: 2]", o:["Perpres 2/2018","MoU 2021","Pasal 75 UU Polri","Inpres Narkotika","A utama"], a:0},
-{q:"Polda Metro Jaya yurisdiksi?[cite: 2]", o:["DKI + Bogor","Jabodetabek","DKI saja","Jawa Barat","B standar"], a:4},
-{q:"Kapolri periode 2024-2029: siapa?[cite: 2]", o:["Listyo Sigit Prabowo","Tito Karnavian","Idham Azis","Bambang Hendarso","A incumbent"], a:0},
-{q:"UU Polri Pasal 39: pensiun. Usia pensiun Bintang 4?[cite: 2]", o:["58 tahun","60 tahun","62 tahun","65 tahun","C khusus"], a:2},
-{q:"Brimob fungsi utama?[cite: 2]", o:["Pengamanan VIP","Penanggulangan kerusuhan","Patroli lalu lintas","Reserse umum","B core"], a:1},
-{q:"Polairud wilayah operasi?[cite: 2]", o:["Darat saja","Laut + udara","Udara saja","Perbatasan","B spesialisasi"], a:1},
-{q:"Sabhara tugas pokok?[cite: 2]", o:["Penyelidikan","Pengamanan demonstrasi","Intelpam","Lalu lintas","B utama"], a:1},
-{q:"Perkapolri 7/2023: transformasi digital Polri. Fokus utama?[cite: 2]", o:["Aplikasi Patroli","E-PPID","Ladmas","Semua sistem","D digitalisasi"], a:3},
-{q:"Hak cuti hamil polisi perempuan?[cite: 2]", o:["2 bulan","3 bulan","90 hari","6 bulan","C sesuai UU"], a:2},
-{q:"Upacara Mabuk Sidang adat Dayak Ngaju, fungsi?[cite: 2]", o:["Perang suku","Musyawarah damai","Panen raya","Kematian","B resolusi konflik"], a:1},
-{q:"Tabuik di Pariaman Sumbar: peringatan?[cite: 2]", o:["Husain Syahid","Wali Songo","Maulid Nabi","Isra Mi'raj","A Karbala"], a:0},
-{q:"Rambu Solo' Toraja: upacara?[cite: 2]", o:["Pernikahan","Kematian","Sunat","Panen","B pemakaman"], a:1},
-{q:"Sekaten Yogyakarta: alat musik utama?[cite: 2]", o:["Gamelan Sekaten","Talempong","Kolintang","Sasando","A keraton"], a:0},
-{q:"Tabot Bengkulu: asal?[cite: 2]", o:["India","Persia","Arab","Turki","B Syiah"], a:1},
-{q:"Sasi laut Maluku: larangan?[cite: 2]", o:["Berburu ikan","Panen hasil laut musiman","Membangun pantai","Wisata","B konservasi"], a:1},
-{q:"Sumpah Patih Raja Haji: adat Minang?[cite: 2]", o:["Ya","Batagak Panghulu","Mamak","B inaugurasi","Opsi E"], a:1},
-{q:"Awig-Awig Bali: fungsi?[cite: 2]", o:["Hukum adat desa","Ritual harian","Tari tradisional","Rumah adat","A desa pakraman"], a:0},
-{q:"Mapalus Minahasa: tradisi?[cite: 2]", o:["Gotong royong","Perang","Pernikahan","Upacara","A kerja sama"], a:0},
-{q:"Sasi pohon Nuaulu Seram: pelindung?[cite: 2]", o:["Pohon sakral","Binatang","Laut","Sawah","A spiritual"], a:0},
-{q:"Legenda Danau Toba: asal Sumatra?[cite: 2]", o:["Si Raja Batak","Toba","Samosir","E","B ikan mas"], a:4},
-{q:"Malin Kundang: hukuman?[cite: 2]", o:["Jadi batu","Tenggelam","Hilang","Miskin","A Sumbar"], a:0},
-{q:"Sangkuriang: gunung?[cite: 2]", o:["Tangkuban Perahu","Merapi","Bromo","Rinjani","A Jawa Barat"], a:0},
-{q:"Keris pusaka: pusat pembuatan?[cite: 2]", o:["Surakarta","Yogyakarta","Madura","Bali","A Mataram"], a:0},
-{q:"Parang: suku asal?[cite: 2]", o:["Dayak","Batak","Minang","Bugis","A Kalimantan"], a:0},
-{q:"Rumah Bolon: Batak?[cite: 2]", o:["Toba","Karo","Simalungun","Pakpak","A Toba"], a:0},
-{q:"Tongkonan: Toraja bentuk atap?[cite: 2]", o:["tanduk kerbau","Julang ngapak","Limasan","Panjang","A ikonik"], a:0},
-{q:"Talempong: Minangkabau?[cite: 2]", o:["Gendang","Gong kecil","Serunai","B perunggu","Opsi E"], a:3},
-{q:"Kolintang: Minahasa?[cite: 2]", o:["Kayu dipukul","Gamelan","Angklung","A kayu resonant","Opsi E"], a:3},
-{q:"Sasando: Rote NTT?[cite: 2]", o:["Dawai bambu","Tiup","Pukul","Gesek","A unik"], a:0},
-{q:"Presiden ke-1: Wakil?[cite: 2]", o:["Hatta","Natsir","Syahrir","Ki Hajar","A"], a:0},
-{q:"Presiden ke-6 SBY: Wakil 2004-2009?[cite: 2]", o:["Jusuf Kalla","Boediono","Try Sutrisno","Hamzah Haz","A"], a:0},
-{q:"Jokowi periode 2: Wakil?[cite: 2]", o:["Jusuf Kalla","Ma'ruf Amin","Hatta Rajasa","Boediono","B"], a:1},
-{q:"Presiden ke-3 Soeharto: Wakil terakhir?[cite: 2]", o:["Adam Malik","Sudharmono","Try Sutrisno","Umar Wirahadikusumah","B"], a:1},
-{q:"Habibie: Wakil?[cite: 2]", o:["Tidak ada","Hamzah Haz","Akbar Tanjung","Wiranto","A transisi"], a:0},
-{q:"Kabinet Persatuan Nasional: presiden?[cite: 2]", o:["Soekarno 1966","Soeharto 1968","Habibie","Gus Dur","A Ampera"], a:0},
-{q:"Kabinet Indonesia Maju: 2019?[cite: 2]", o:["Jokowi-Ma'ruf","SBY-JK","Megawati","A kabinet 2","Opsi E"], a:0},
-{q:"Kabinet Gotong Royong: presiden?[cite: 2]", o:["Soekarno","Soeharto","Gus Dur","Megawati","A 1957"], a:0},
-{q:"Kabinet Merah Putih: 2024?[cite: 2]", o:["Prabowo-Gibran","Jokowi 2","SBY 2","A baru","Opsi E"], a:0},
-{q:"Kabinet Pembangunan IV: era?[cite: 2]", o:["Soeharto 1988","Orde Baru awal","Reformasi","A akhir","Opsi E"], a:0},
-{q:"Bapak Pendidikan Nasional?[cite: 2]", o:["Ki Hajar Dewantara","Soekarno","Hatta","Ki Hadjar","A Taman Siswa"], a:0},
-{q:"Bapak Telekomunikasi:[cite: 2]", o:["BJ Habibie","Soegijapranata","Liem Bwan Tjie","A avionik","Opsi E"], a:0},
-{q:"Pahlawan Revolusi Sosial:[cite: 2]", o:["Sisingamangaraja","Tuanku Imam Bonjol","Amir Hamzah","E","Diponegoro"], a:4},
-{q:"Bapak Koperasi:[cite: 2]", o:["R. Soetomo","Moh. Hatta","Ki Hajar","B ekonom","Opsi E"], a:1},
-{q:"Penemu Reog Ponorogo:[cite: 2]", o:["Ki Seno","Sunan Kalijaga","Panembahan Senopati","A legenda","Opsi E"], a:0},
-{q:"Atlet bulutangkis emas Olimpiade 1992:[cite: 2]", o:["Susi Susanti","Ricky Subagja","Alan Budikusuma","A tunggal putri","Opsi E"], a:0},
-{q:"Pengarang \"Bumi Manusia\":[cite: 2]", o:["Pramoedya Ananta Toer","Chairil Anwar","Sitor Situmorang","A Tetralogi Buru","Opsi E"], a:0},
-{q:"Pelukis \"Proklamator\":[cite: 2]", o:["Basuki Abdullah","Affandi","Raden Saleh","A lukisan lukisan","Opsi E"], a:0},
-{q:"Atlet angkat besi emas ATHENS 2004:[cite: 2]", o:["Rai Manajemen","Eko Yuli","Tri Kusumawati","A putra","Opsi E"], a:0},
-{q:"Penyanyi \"Bengawan Solo\":[cite: 2]", o:["Gesang","Ismail Marzuki","Cornel Simanjuntak","A Marten","Opsi E"], a:0},
-{q:"Nobel Perdamaian 2023:[cite: 2]", o:["Narges Mohammadi","WHO","Greta Thunberg","A Iran","Opsi E"], a:0},
-{q:"Nobel Ekonomi 2023:[cite: 2]", o:["Claudia Goldin","Abhijit Banerjee","Daron Acemoglu","A gender","Opsi E"], a:0},
-{q:"Nobel Sastra Indonesia pernah?[cite: 2]", o:["Ya Pramoedya","Tidak","Chairil","B belum","Opsi E"], a:1},
-{q:"Nobel Kimia 2023:[cite: 2]", o:["Moungi Bawendi","Louis Brus","Alexei Ekimov","Semua quantum dots","D"], a:3},
-{q:"Penemu WWW:[cite: 2]", o:["Tim Berners-Lee","Alan Turing","Bill Gates","A CERN","Opsi E"], a:0},
-{q:"Penemu vaksin polio:[cite: 2]", o:["Jonas Salk","Louis Pasteur","Edward Jenner","A 1955","Opsi E"], a:0},
-{q:"Penemu transistor:[cite: 2]", o:["Bardeen, Brattain, Shockley","Kilby","Intel","A Bell Labs","Opsi E"], a:0},
-{q:"Tembok Besar China panjang?[cite: 2]", o:["21.196 km","8.850 km","13.171 km","A total","Opsi E"], a:0},
-{q:"Piramida Giza dibangun?[cite: 2]", o:["2580-2560 SM","2000 SM","1500 SM","A Khufu","Opsi E"], a:0},
-{q:"Colosseum Roma: kapasitas?[cite: 2]", o:["50.000","80.000","100.000","B gladiator","Opsi E"], a:1},
-{q:"Ibu kota Fiji?[cite: 2]", o:["Suva","Nadi","Lautoka","A Pasifik","Opsi E"], a:0},
-{q:"Mata uang Brasil:[cite: 2]", o:["Real","Peso","Dollar","A BRL","Opsi E"], a:0},
-{q:"Ibu kota baru Indonesia:[cite: 2]", o:["Nusantara","IKN","C sama","Opsi D","Opsi E"], a:2},
-{q:"Mata uang Jepang:[cite: 2]", o:["Yen","Won","Ringgit","A","Opsi E"], a:0},
-{q:"Ibu kota Nigeria:[cite: 2]", o:["Abuja","Lagos","Kano","A 1991","Opsi E"], a:0},
-{q:"Presiden Argentina 2023:[cite: 2]", o:["Javier Milei","Alberto Fernandez","Macri","A libertarian","Opsi E"], a:0},
-{q:"Perang Ukraina: aliansi pendukung utama?[cite: 2]", o:["NATO","BRICS","ASEAN","A Barat","Opsi E"], a:0},
-{q:"Pemilu Taiwan 2024 pemenang:[cite: 2]", o:["Lai Ching-te (DPP)","KMT","TPP","A pro-indep","Opsi E"], a:0},
-{q:"Gaza 2024: pemimpin Hamas tewas?[cite: 2]", o:["Ismail Haniyeh","Yahya Sinwar","Khaled Mashal","A Iran","Opsi E"], a:0},
-{q:"Olimpiade Paris 2024 tuan rumah:[cite: 2]", o:["Prancis","Los Angeles 2028","Brisbane 2032","A 100 tahun","Opsi E"], a:0},
-{q:"Tugas pokok Polri menurut UU No. 2 Tahun 2002 meliputi…[cite: 2]", o:["Pertahanan negara","Penegakan hukum, perlindungan, pengayoman, pelayanan","Diplomasi internasional","Legislasi","Yudikatif"], a:1},
-{q:"Fungsi Polri dalam sistem ketatanegaraan berada di bawah…[cite: 2]", o:["DPR","Presiden","MPR","MA","MK"], a:1},
-{q:"Kewenangan diskresi Polri bertujuan untuk…[cite: 2]", o:["Kepentingan pribadi","Menghindari hukum","Kepentingan umum dalam keadaan mendesak","Politik","Ekonomi"], a:2},
-{q:"Polri bersifat nasional berarti…[cite: 2]", o:["Terbatas daerah","Tidak terikat wilayah","Melayani seluruh wilayah NKRI","Hanya pusat","Regional"], a:2},
-{q:"Prinsip profesionalisme Polri menuntut…[cite: 2]", o:["Loyalitas tanpa kritik","Netralitas dan kompetensi","Kepentingan pribadi","Kekuasaan","Otoritas mutlak"], a:1},
-{q:"Pengawasan eksternal Polri dilakukan oleh…[cite: 2]", o:["Presiden saja","DPR dan Kompolnas","TNI","MA","KPK saja"], a:1},
-{q:"Polri wajib menjunjung tinggi…[cite: 2]", o:["Kekuasaan","HAM","Politik","Ekonomi","Budaya asing"], a:1},
-{q:"Fungsi intelijen Polri termasuk…[cite: 2]", o:["Operasi militer","Deteksi dini gangguan keamanan","Diplomasi","Legislasi","Perdagangan"], a:1},
-{q:"Polri dalam penegakan hukum berpedoman pada…[cite: 2]", o:["Kekuasaan","UUD dan hukum berlaku","Perintah individu","Tradisi","Budaya"], a:1},
-{q:"Prinsip akuntabilitas berarti…[cite: 2]", o:["Bebas tanggung jawab","Dapat dipertanggungjawabkan","Tertutup","Rahasia total","Independen penuh"], a:1},
-{q:"Hubungan Polri dengan masyarakat bersifat…[cite: 2]", o:["Otoriter","Kemitraan","Dominasi","Kompetisi","Netral"], a:1},
-{q:"Netralitas Polri berarti…[cite: 2]", o:["Tidak bekerja","Tidak memihak politik","Anti pemerintah","Bebas hukum","Independen absolut"], a:1},
-{q:"Kabinet saat ini dikenal sebagai…[cite: 2]", o:["Kabinet Indonesia Maju","Kabinet Reformasi","Kabinet Gotong Royong","Kabinet Pembangunan","Kabinet Persatuan"], a:0},
-{q:"Tokoh proklamator adalah…[cite: 2]", o:["Soekarno & Hatta","Soeharto & Habibie","Gus Dur & Megawati","SBY & Jokowi","Tan Malaka & Kartini"], a:0},
-{q:"Rumah Gadang berasal dari…[cite: 2]", o:["Minangkabau","Batak","Sunda","Bali","Dayak"], a:0},
-{q:"Alat musik Sasando berasal dari…[cite: 2]", o:["Bali","NTT","NTB","Maluku","Sulawesi"], a:1},
-{q:"Upacara Kasada dilakukan oleh suku…[cite: 2]", o:["Tengger","Baduy","Asmat","Dayak","Bugis"], a:0},
-{q:"Senjata Rencong berasal dari…[cite: 2]", o:["Aceh","Jawa","Bali","Papua","NTB"], a:0},
-{q:"Legenda Sangkuriang berasal dari…[cite: 2]", o:["Jawa Tengah","Jawa Barat","Bali","Sumatera","Kalimantan"], a:1},
-{q:"Rumah Honai berasal dari…[cite: 2]", o:["Papua","Bali","Jawa","Sumatera","Sulawesi"], a:0}
+const PU = [
+{q:"Dalam melaksanakan fungsi kepolisian, Polri bertugas memelihara keamanan dan ketertiban masyarakat. Fungsi tersebut secara konstitusional diatur dalam...", o:["TAP MPR No. II Tahun 1998", "UUD 1945 Pasal 30 ayat (4)", "KUHP Pasal 362", "Perpres Nomor 7 Tahun 2005", "UU TNI Tahun 2004"], a:1},
+{q:"Kepolisian Negara Republik Indonesia dalam menjalankan tugasnya harus menjunjung tinggi HAM. Prinsip tersebut paling tepat mencerminkan asas...", o:["Sentralisasi", "Militeristik", "Profesional dan proporsional", "Otoritarian", "Dominasi kekuasaan"], a:2},
+{q:"Seorang anggota Polri membubarkan kerumunan dengan pendekatan persuasif sebelum tindakan represif. Tindakan tersebut mencerminkan fungsi teknis...", o:["Intelijen keamanan", "Pembinaan masyarakat", "Reserse kriminal", "Brigade mobil", "Laboratorium forensik"], a:1},
+{q:"Apabila seorang anggota Polri melakukan penyalahgunaan wewenang dalam penangkapan, maka tindakan tersebut bertentangan dengan prinsip...", o:["Equality before the law", "Due process of law", "Legal drafting", "Judicial review", "Collective responsibility"], a:1},
+{q:"Perbedaan utama antara tugas preventif dan represif kepolisian terletak pada...", o:["Preventif dilakukan setelah kejahatan terjadi", "Represif bertujuan mencegah ancaman", "Preventif berorientasi pencegahan gangguan kamtibmas", "Represif dilakukan masyarakat sipil", "Preventif hanya dilakukan TNI"], a:2},
+{q:"Dalam struktur fungsi teknis kepolisian, penanganan lalu lintas termasuk fungsi...", o:["Samapta", "Intelkam", "Binmas", "Lalu lintas", "Reskrim"], a:3},
+{q:"Seorang anggota Polri mengutamakan kepentingan masyarakat dibanding kepentingan pribadi ketika bertugas. Sikap tersebut mencerminkan nilai...", o:["Hedonisme", "Individualisme", "Tribrata", "Liberalisme", "Kapitalisme"], a:2},
+{q:"Menurut UU Kepolisian, Polri berada di bawah...", o:["DPR", "Mahkamah Agung", "Presiden", "Menteri Pertahanan", "MPR"], a:2},
+{q:"Kewenangan diskresi kepolisian diberikan agar anggota Polri mampu...", o:["Bertindak semena-mena", "Menggantikan fungsi pengadilan", "Mengambil keputusan dalam situasi tertentu demi kepentingan umum", "Menyusun undang-undang baru", "Menghapus sanksi pidana"], a:2},
+{q:"Tugas pokok Polri berikut yang paling berkaitan dengan penegakan hukum adalah...", o:["Menyelenggarakan pendidikan nasional", "Menetapkan APBN", "Melakukan penyidikan tindak pidana", "Mengawasi kebijakan moneter", "Menyusun kebijakan luar negeri"], a:2},
+{q:"Provinsi termuda di Indonesia saat ini adalah...", o:["Papua Tengah", "Papua Barat Daya", "Kalimantan Utara", "Sulawesi Barat", "Papua Pegunungan"], a:1},
+{q:"Lembaga negara yang berwenang menguji undang-undang terhadap UUD 1945 adalah...", o:["Mahkamah Agung", "DPR", "BPK", "Mahkamah Konstitusi", "KY"], a:3},
+{q:"Sistem pemerintahan Indonesia menganut prinsip...", o:["Parlementer absolut", "Presidensial", "Monarki konstitusional", "Federalisme penuh", "Oligarki"], a:1},
+{q:"Semboyan “Bhinneka Tunggal Ika” berasal dari kitab...", o:["Negarakertagama", "Sutasoma", "Arjunawiwaha", "Bharatayudha", "Pararaton"], a:1},
+{q:"Jika DPR mengusulkan hak interpelasi kepada pemerintah, maka fungsi DPR yang dijalankan adalah fungsi...", o:["Legislasi", "Yudikatif", "Pengawasan", "Anggaran", "Diplomasi"], a:2},
+{q:"Tujuan utama otonomi daerah adalah...", o:["Memisahkan daerah dari pusat", "Mempercepat kesejahteraan masyarakat daerah", "Menghapus kewenangan pusat", "Membentuk negara federal", "Memperkuat dominasi pusat"], a:1},
+{q:"Lembaga yang memiliki kewenangan mengaudit pengelolaan keuangan negara adalah...", o:["OJK", "KPK", "BPK", "BI", "KY"], a:2},
+{q:"Konsep negara hukum di Indonesia ditegaskan dalam UUD 1945 Pasal...", o:["1 ayat (1)", "1 ayat (2)", "1 ayat (3)", "27 ayat (1)", "33 ayat (1)"], a:2},
+{q:"Pancasila sebagai dasar negara disahkan pada tanggal...", o:["1 Juni 1945", "17 Agustus 1945", "18 Agustus 1945", "22 Juni 1945", "20 Mei 1908"], a:2},
+{q:"Indonesia disebut negara maritim karena...", o:["Memiliki gunung terbanyak", "Sebagian besar wilayahnya berupa lautan", "Penduduknya mayoritas nelayan", "Seluruh wilayahnya kepulauan", "Beriklim tropis"], a:1},
+{q:"Tari Saman berasal dari daerah...", o:["Sumatera Barat", "Aceh", "Lampung", "Bengkulu", "Riau"], a:1},
+{q:"Kerajaan Hindu tertua di Indonesia adalah...", o:["Sriwijaya", "Kutai", "Majapahit", "Tarumanegara", "Singasari"], a:1},
+{q:"Perang Diponegoro terjadi pada tahun...", o:["1808–1811", "1815–1820", "1825–1830", "1830–1835", "1840–1845"], a:2},
+{q:"Tokoh pencetus politik etis yang terkenal dengan trilogi edukasi, irigasi, dan transmigrasi adalah...", o:["Van den Bosch", "Daendels", "Douwes Dekker", "Van Deventer", "Snouck Hurgronje"], a:3},
+{q:"Rumah adat Tongkonan berasal dari suku...", o:["Batak", "Dayak", "Toraja", "Asmat", "Minahasa"], a:2},
+{q:"Candi Borobudur dibangun pada masa Dinasti...", o:["Sanjaya", "Syailendra", "Isyana", "Warmadewa", "Kediri"], a:1},
+{q:"Lagu “Ampar-Ampar Pisang” berasal dari daerah...", o:["Kalimantan Selatan", "Sulawesi Selatan", "Maluku", "Bali", "Papua"], a:0},
+{q:"Peristiwa Sumpah Pemuda terjadi pada tanggal...", o:["20 Mei 1908", "17 Agustus 1945", "28 Oktober 1928", "10 November 1945", "1 Juni 1945"], a:2},
+{q:"Salah satu tujuan VOC dibentuk Belanda adalah...", o:["Menyebarkan demokrasi", "Memperkuat pendidikan pribumi", "Menghindari persaingan dagang antar pedagang Belanda", "Membentuk pemerintahan Indonesia", "Menghapus monopoli perdagangan"], a:2},
+{q:"Tokoh yang dikenal sebagai Bapak Pendidikan Nasional adalah...", o:["Ahmad Dahlan", "Soekarno", "Ki Hajar Dewantara", "Moh. Hatta", "Agus Salim"], a:2},
+{q:"Markas besar PBB berada di...", o:["Jenewa", "Paris", "London", "New York", "Den Haag"], a:3},
+{q:"ASEAN didirikan pada tahun...", o:["1965", "1967", "1970", "1975", "1980"], a:1},
+{q:"Mata uang resmi Jepang adalah...", o:["Won", "Yuan", "Yen", "Ringgit", "Baht"], a:2},
+{q:"Negara dengan jumlah penduduk terbanyak di dunia saat ini adalah...", o:["Amerika Serikat", "Indonesia", "India", "Rusia", "Brasil"], a:2},
+{q:"Perang Dingin terjadi antara blok Barat yang dipimpin Amerika Serikat dan blok Timur yang dipimpin...", o:["Tiongkok", "Korea Utara", "Jerman Timur", "Uni Soviet", "Vietnam"], a:3},
+{q:"NATO merupakan organisasi...", o:["Ekonomi Asia", "Pertahanan militer Atlantik Utara", "Perdagangan bebas Eropa", "Kerja sama budaya dunia", "Perserikatan negara Afrika"], a:1},
+{q:"Negara yang dijuluki “Negeri Matahari Terbit” adalah...", o:["Korea Selatan", "Thailand", "Jepang", "China", "Vietnam"], a:2},
+{q:"Brexit adalah istilah keluarnya Inggris dari...", o:["NATO", "ASEAN", "Uni Afrika", "Uni Eropa", "OECD"], a:3},
+{q:"Organisasi kesehatan dunia di bawah PBB adalah...", o:["UNICEF", "UNESCO", "WHO", "IMF", "ILO"], a:2},
+{q:"Konflik Israel dan Palestina terutama memperebutkan wilayah...", o:["Gaza dan Yerusalem", "Sinai", "Kurdistan", "Crimea", "Tibet"], a:0},
+{q:"Ancaman penyebaran hoaks di media sosial dapat melemahkan...", o:["Nilai mata uang", "Integrasi nasional", "Produksi industri", "Stabilitas iklim", "Nilai ekspor"], a:1},
+{q:"Transformasi digital Polri bertujuan utama untuk...", o:["Mengurangi pelayanan masyarakat", "Mempercepat dan mempermudah pelayanan publik", "Menghapus administrasi negara", "Membatasi akses informasi", "Mengurangi penegakan hukum"], a:1},
+{q:"Salah satu ancaman nonmiliter yang saat ini dihadapi Indonesia adalah...", o:["Invasi kolonial", "Perompakan samudra", "Serangan siber", "Penjajahan VOC", "Perang dunia"], a:2},
+{q:"Pemanasan global terutama disebabkan oleh meningkatnya...", o:["Nitrogen", "Oksigen", "Gas rumah kaca", "Helium", "Uap air laut"], a:2},
+{q:"Korupsi berdampak besar terhadap pembangunan nasional karena...", o:["Mempercepat pertumbuhan ekonomi", "Mengurangi kepercayaan publik terhadap pemerintah", "Menambah investasi asing", "Mengurangi pengangguran", "Memperkuat birokrasi"], a:1},
+{q:"Program hilirisasi industri di Indonesia bertujuan untuk...", o:["Mengurangi nilai tambah produk", "Menjual bahan mentah sebanyak mungkin", "Meningkatkan nilai tambah sumber daya alam", "Menghapus industri nasional", "Mengurangi ekspor"], a:2},
+{q:"Fenomena judi online saat ini dianggap berbahaya karena dapat...", o:["Memperkuat ekonomi keluarga", "Meningkatkan produktivitas kerja", "Menyebabkan masalah sosial dan kriminalitas", "Mengurangi penggunaan internet", "Menambah pendapatan negara secara legal"], a:2},
+{q:"Tujuan utama pembangunan Ibu Kota Nusantara (IKN) adalah...", o:["Menghapus Jakarta", "Memindahkan seluruh penduduk Jawa", "Pemerataan pembangunan nasional", "Mengurangi hubungan internasional", "Menghapus sistem provinsi"], a:2},
+{q:"Radikalisme dapat mengancam persatuan bangsa karena...", o:["Menghargai keberagaman", "Menolak kekerasan", "Bersifat intoleran dan ekstrem", "Mendukung demokrasi", "Mengutamakan musyawarah"], a:2},
+{q:"Dalam menghadapi era globalisasi, generasi muda Indonesia sebaiknya...", o:["Menolak seluruh budaya asing", "Menutup diri dari perkembangan dunia", "Selektif menyerap budaya asing tanpa meninggalkan jati diri bangsa", "Mengikuti seluruh budaya luar", "Menghapus budaya nasional"], a:2}
 ];
 
-// ... (Simpan kode state, timer, render, dll dari sebelumnya di sini)
+const KOMP = [
+{q:"Seorang staf Polres sedang membuat surat resmi dan ingin agar semua teks rata kiri dan kanan agar terlihat rapi. Fitur yang digunakan adalah...", o:["Align Left", "Center", "Justify", "Line Spacing", "Indent"], a:2},
+{q:"Dalam membuat laporan, Anda ingin memberi nomor halaman otomatis di bagian bawah tengah. Menu yang digunakan adalah...", o:["Insert Header", "Insert Page Number", "Layout Page Setup", "Review Numbering", "Home Paragraph"], a:1},
+{q:"Anda ingin mengganti semua kata 'Polisi' menjadi 'Polri' secara otomatis dalam dokumen panjang. Gunakan fitur...", o:["Replace", "Find", "Select", "Edit", "Search"], a:0},
+{q:"Untuk membuat daftar isi otomatis, syarat utama adalah...", o:["Menggunakan Bold", "Menggunakan Heading Style", "Menggunakan Font besar", "Menggunakan Bullet", "Menggunakan Italic"], a:1},
+{q:"Shortcut untuk menyimpan dokumen adalah...", o:["Ctrl + P", "Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + C"], a:1},
+{q:"Jika ingin mengatur jarak antar baris menjadi 1,5 spasi, gunakan...", o:["Paragraph → Line Spacing", "Insert Spacing", "Layout Margin", "Review Spacing", "Home Font"], a:0},
+{q:"Untuk membuat huruf pertama pada paragraf menjadi besar (Drop Cap), gunakan menu...", o:["Insert", "Home", "Layout", "Design", "Review"], a:0},
+{q:"Fungsi dari 'Track Changes' adalah...", o:["Menghapus teks", "Melacak perubahan dokumen", "Mengunci file", "Mengganti font", "Menyimpan otomatis"], a:1},
+{q:"Jika ingin menambahkan tanda tangan digital pada dokumen, gunakan...", o:["Insert Signature Line", "Home Sign", "Review Signature", "Layout Signature", "File Print"], a:0},
+{q:"Fungsi dari 'Ctrl + B' adalah...", o:["Italic", "Underline", "Bold", "Copy", "Paste"], a:2},
+{q:"Untuk membuat tabel di Word, menu yang digunakan adalah...", o:["Home", "Insert", "Layout", "Design", "Review"], a:1},
+{q:"Fungsi 'Mail Merge' adalah...", o:["Menggabungkan file", "Membuat surat massal", "Menyimpan dokumen", "Menghapus data", "Membuat tabel"], a:1},
+{q:"Untuk mengubah margin halaman digunakan menu...", o:["Home", "Insert", "Layout", "Review", "Design"], a:2},
+{q:"Jika ingin memberi komentar pada dokumen, gunakan...", o:["Insert Comment", "Review → Comment", "Home Comment", "Layout Comment", "File Comment"], a:1},
+{q:"Fungsi dari 'Ctrl + Z' adalah...", o:["Redo", "Undo", "Copy", "Paste", "Delete"], a:1},
+{q:"Untuk menyisipkan gambar ke dalam dokumen...", o:["Insert Picture", "Home Picture", "Layout Picture", "Review → Picture", "File Picture"], a:0},
+{q:"Fungsi 'Header' adalah...", o:["Judul dokumen", "Bagian atas halaman", "Bagian bawah halaman", "Isi utama", "Catatan kaki"], a:1},
+{q:"Untuk mengatur orientasi halaman (portrait/landscape)...", o:["Insert", "Layout", "Home", "Review", "Design"], a:1},
+{q:"Fitur untuk membuat daftar poin adalah...", o:["Numbering", "Bullet", "Paragraph", "Font", "Style"], a:1},
+{q:"Untuk mencetak dokumen digunakan shortcut...", o:["Ctrl + P", "Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + F"], a:0},
+{q:"Rumus untuk menjumlahkan data adalah...", o:["=COUNT", "=SUM", "=AVERAGE", "=MAX", "=MIN"], a:1},
+{q:"Untuk mencari nilai rata-rata digunakan...", o:["SUM", "COUNT", "AVERAGE", "MAX", "IF"], a:2},
+{q:"Jika ingin mengetahui nilai terbesar...", o:["MAX", "MIN", "SUM", "COUNT", "IF"], a:0},
+{q:"Fungsi IF digunakan untuk...", o:["Menjumlah", "Logika kondisi", "Menghitung rata-rata", "Mengurutkan", "Menghapus"], a:1},
+{q:"Penulisan rumus Excel selalu diawali dengan...", o:["+", "-", "=", "*", "/"], a:2},
+{q:"Shortcut untuk copy adalah...", o:["Ctrl + V", "Ctrl + X", "Ctrl + C", "Ctrl + Z", "Ctrl + S"], a:2},
+{q:"Untuk membuat grafik digunakan menu...", o:["Home", "Insert", "Data", "Review", "View"], a:1},
+{q:"Fungsi COUNT digunakan untuk...", o:["Menghitung jumlah data angka", "Menjumlahkan", "Rata-rata", "Logika", "Menghapus"], a:0},
+{q:"Untuk mengurutkan data...", o:["Sort", "Filter", "Insert", "Delete", "Copy"], a:0},
+{q:"Fungsi VLOOKUP digunakan untuk...", o:["Menghapus data", "Mencari data vertikal", "Menjumlahkan", "Mengurutkan", "Membuat grafik"], a:1},
+{q:"Untuk menghapus isi sel...", o:["Delete", "Backspace", "Clear", "Remove", "Erase"], a:2},
+{q:"Untuk menambahkan kolom...", o:["Insert Column", "Delete Column", "Format", "Sort", "Filter"], a:0},
+{q:"Fungsi MIN adalah...", o:["Nilai terbesar", "Nilai terkecil", "Rata-rata", "Jumlah", "Logika"], a:1},
+{q:"Untuk memfilter data digunakan...", o:["Sort", "Filter", "Insert", "Delete", "Copy"], a:1},
+{q:"Jika ingin menggabungkan sel...", o:["Merge Cells", "Split Cells", "Copy", "Paste", "Delete"], a:0},
+{q:"Fungsi MAX adalah...", o:["Nilai terbesar", "Nilai terkecil", "Rata-rata", "Jumlah", "Logika"], a:0},
+{q:"Untuk membuat tabel...", o:["Insert Table", "Home Table", "Data Table", "Review → Table", "View→ Table"], a:0},
+{q:"Untuk menyimpan file...", o:["Ctrl + S", "Ctrl + P", "Ctrl + O", "Ctrl + N", "Ctrl + Z"], a:0},
+{q:"Untuk mengunci baris/kolom...", o:["Freeze Panes", "Lock Cells", "Protect Sheet", "Hide", "Format"], a:0},
+{q:"Fungsi SUM(A1:A5) berarti...", o:["Menghitung rata-rata", "Menjumlahkan A1 sampai A5", "Nilai terbesar", "Nilai terkecil", "Menghapus data"], a:1},
+{q:"Untuk membuat slide baru...", o:["Insert Slide", "Home New Slide", "Design Slide", "View Slide", "Review Slide"], a:1},
+{q:"Untuk menjalankan presentasi...", o:["F1", "F5", "F2", "F3", "F4"], a:1},
+{q:"Untuk menambahkan animasi...", o:["Insert", "Design", "Animations", "View", "Review"], a:2},
+{q:"Untuk mengganti tema...", o:["Insert", "Design", "Animations", "View", "Review"], a:1},
+{q:"Untuk menambahkan gambar...", o:["Insert Picture", "Home Picture", "Design Picture", "Review Picture", "View Picture"], a:0},
+{q:"Slide master digunakan untuk...", o:["Menghapus slide", "Mengatur desain semua slide", "Menambah teks", "Menambah gambar", "Menyimpan file"], a:1},
+{q:"Untuk transisi antar slide...", o:["Animations", "Transitions", "Design", "View", "Review"], a:1},
+{q:"Untuk menyimpan file...", o:["Ctrl + S", "Ctrl + P", "Ctrl + O", "Ctrl + N", "Ctrl + Z"], a:0},
+{q:"Untuk menambahkan teks...", o:["Insert Text Box", "Home Text", "Design Text", "Review → Text", "View→ Text"], a:0},
+{q:"Untuk menghapus slide...", o:["Delete", "Remove", "Erase", "Clear", "Backspace"], a:0}
+];
 
 // ================= STATE =================
 let data = [];
@@ -345,19 +259,18 @@ function startTest(type){
     document.getElementById("main").style.display = "flex";
     document.getElementById("main").style.flexDirection = "column";
     
-    document.getElementById("test-title").innerText = `Ujian ${type}`;
+    let titleStr = "";
+    if (type === "TWK") { data = [...TWK]; titleStr = "Ujian TWK"; } 
+    else if (type === "PU") { data = [...PU]; titleStr = "Ujian Penalaran Umum"; } 
+    else { data = [...KOMP]; titleStr = "Ujian Komputer"; }
 
-    // Load data based on selection
-    data = (type === "TWK") ? [...TWK] : [...TIU];
-
-    // Shuffle soal (Opsional)
-    // data.sort(() => Math.random() - 0.5);
+    document.getElementById("test-title").innerText = titleStr;
 
     answers = Array(data.length).fill(null);
     flagged = Array(data.length).fill(false);
-
-    // ⏱️ TIMER CAT (Proporsional: 100 soal = 7200 detik. Disini menyesuaikan panjang array)
-    time = Math.floor((data.length / 100) * 7200) || 1200; // Default 20 menit jika soal sedikit
+    
+    // 50 soal = 3600 detik (60 menit). 100 soal = 7200 detik (120 menit).
+    time = Math.floor((data.length / 100) * 7200) || 1200; 
 
     startTimer();
     render();
@@ -367,19 +280,14 @@ function startTest(type){
 function startTimer(){
     timerInterval = setInterval(() => {
         time--;
-
         let h = Math.floor(time / 3600);
         let m = Math.floor((time % 3600) / 60);
         let s = time % 60;
-
         document.getElementById("timer").innerText = 
             `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:${s < 10 ? "0" + s : s}`;
 
         if(time === 60){ alert("Waktu tersisa 1 menit!"); }
-        if(time <= 0){
-            clearInterval(timerInterval);
-            submit();
-        }
+        if(time <= 0){ clearInterval(timerInterval); submit(); }
     }, 1000);
 }
 
@@ -387,16 +295,13 @@ function startTimer(){
 function renderNav(){
     let navContainer = document.getElementById("nav-container");
     navContainer.innerHTML = "";
-
     data.forEach((_, i) => {
         let btn = document.createElement("button");
         btn.innerText = i + 1;
         btn.className = "nav-btn";
-        
         if (i === index) btn.classList.add("active");
         if (answers[i] !== null) btn.classList.add("answered");
         if (flagged[i]) btn.classList.add("flagged");
-
         btn.onclick = () => { index = i; render(); };
         navContainer.appendChild(btn);
     });
@@ -405,54 +310,28 @@ function renderNav(){
 function render(){
     let q = data[index];
     let html = `<h3>Soal ${index + 1} dari ${data.length}</h3><p style="font-size: 16px; line-height: 1.5;">${q.q}</p><div class="options">`;
-
     q.o.forEach((opt, i) => {
         html += `
         <label>
-            <input type="radio" name="ans" value="${i}" 
-            ${answers[index] == i ? "checked" : ""} 
-            onchange="setAnswer(${i})">
+            <input type="radio" name="ans" value="${i}" ${answers[index] == i ? "checked" : ""} onchange="setAnswer(${i})">
             ${String.fromCharCode(65 + i)}. ${opt}
         </label>`;
     });
     html += `</div>`;
-
     document.getElementById("question").innerHTML = html;
     updateProgress();
     renderNav();
 }
 
-function setAnswer(val) {
-    answers[index] = val;
-    renderNav();
-    updateProgress();
-}
-
-// ================= PROGRESS =================
-function updateProgress(){
-    let done = answers.filter(a => a !== null).length;
-    let percent = (done / data.length) * 100;
-    document.getElementById("progress").style.width = percent + "%";
-}
-
-// ================= NAVIGASI =================
-function next(){
-    if(index < data.length - 1){ index++; render(); }
-}
-
-function prev(){
-    if(index > 0){ index--; render(); }
-}
-
-function flag(){
-    flagged[index] = !flagged[index];
-    renderNav();
-}
+function setAnswer(val) { answers[index] = val; renderNav(); updateProgress(); }
+function updateProgress(){ document.getElementById("progress").style.width = ((answers.filter(a => a !== null).length / data.length) * 100) + "%"; }
+function next(){ if(index < data.length - 1){ index++; render(); } }
+function prev(){ if(index > 0){ index--; render(); } }
+function flag(){ flagged[index] = !flagged[index]; renderNav(); }
 
 // ================= SUBMIT =================
 function submit(){
-    if(time > 0 && !confirm("Anda yakin ingin mengumpulkan ujian sekarang?")) return;
-    
+    if(time > 0 && !confirm("Yakin mau dikumpulin sekarang?")) return;
     clearInterval(timerInterval);
     let score = 0;
     let review = "<div style='margin-top:20px; text-align:left; max-width:800px; margin-left:auto; margin-right:auto;'><h3>Detail Review:</h3>";
@@ -462,10 +341,10 @@ function submit(){
             score++;
             review += `<p style="color:green;">✔ Soal ${i+1}: Benar</p>`;
         } else {
-            let userAns = answers[i] !== null ? q.o[answers[i]] : "Tidak dijawab";
+            let userAns = answers[i] !== null ? q.o[answers[i]] : "Kosong (Tidak dijawab)";
             review += `<p style="color:red; background:#fee; padding:10px; border-radius:5px;">
                 ❌ <b>Soal ${i+1}: Salah</b><br>
-                Jawaban Anda: ${userAns}<br>
+                Jawaban Lu: ${userAns}<br>
                 Kunci Jawaban: ${q.o[q.a]}
             </p>`;
         }
@@ -473,11 +352,11 @@ function submit(){
     review += "</div>";
 
     document.body.innerHTML = `
-    <div style="text-align:center; padding:50px; font-family:Arial;">
-        <h2>Hasil Ujian CAT</h2>
+    <div style="text-align:center; padding:50px; font-family:Arial; height: 100vh; overflow-y: auto;">
+        <h2>Hasil Ujian</h2>
         <h1 style="font-size:48px; margin:10px 0; color:#007bff;">${score} / ${data.length}</h1>
-        <p style="font-size:20px;">Nilai Anda: <b>${Math.round((score / data.length) * 100)}</b></p>
-        <button onclick="location.reload()" style="padding:10px 20px; font-size:16px;">Kembali ke Menu Utama</button>
+        <p style="font-size:20px;">Nilai: <b>${Math.round((score / data.length) * 100)}</b></p>
+        <button onclick="location.reload()" style="padding:10px 20px; font-size:16px;">Balik ke Menu Awal</button>
         ${review}
     </div>`;
 }
